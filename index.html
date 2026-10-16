@@ -3,7 +3,7 @@
 <title>Treino CPA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: folha de respostas de prova. Régua de marcas de leitura óptica no topo, gabarito de bolinhas A-D, formulário com linhas de preenchimento. Aposta visual: a régua e as bolinhas. */
 :root{
@@ -289,6 +289,80 @@ details.tp>summary b{font-family:var(--f-display);font-size:18px;line-height:1.2
 .callout.exam{background:var(--ok-soft);border-color:var(--ok)}
 .tp-body .tablewrap table{min-width:420px}
 .tp-go{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+
+/* ===== Tema moderno (violeta, cantos grandes, Inter) ===== */
+:root{
+  --bg:#F6F5FF; --surface:#FFFFFF; --sunk:#EEEBFB; --fg:#14122B; --muted:#5E5B82; --line:#E4E0F6;
+  --accent:#5B4BEF; --accent-ink:#FFFFFF; --accent-soft:#EFECFF;
+  --grad:linear-gradient(135deg,#5B4BEF,#9B5CFF);
+  --f-display:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-ui:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --sh:0 1px 0 #E7E4FB,0 14px 40px rgba(75,63,212,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0D0B1E;--surface:#17142E;--sunk:#110F25;--fg:#EEEBFF;--muted:#A9A5CF;--line:#2C2850;--accent:#9C8CFF;--accent-ink:#0D0B1E;--accent-soft:#241F52;--sh:0 14px 40px rgba(0,0,0,.35);}
+}
+:root[data-theme="dark"]{--bg:#0D0B1E;--surface:#17142E;--sunk:#110F25;--fg:#EEEBFF;--muted:#A9A5CF;--line:#2C2850;--accent:#9C8CFF;--accent-ink:#0D0B1E;--accent-soft:#241F52;--sh:0 14px 40px rgba(0,0,0,.35);}
+body{font-size:16px;background:radial-gradient(900px 420px at 15% -80px,rgba(110,92,255,.14),transparent 70%),var(--bg);background-attachment:fixed}
+h1,h2,h3,h4{letter-spacing:-.025em}
+.label{letter-spacing:.09em;font-weight:700;color:var(--accent)}
+.top{padding-block:20px}
+.brand{font-weight:800;letter-spacing:-.03em}
+.brand .mk{width:32px;height:32px;border:0;border-radius:11px;background:var(--grad)}
+.brand .mk::after{display:none}
+.tabs{background:var(--surface);padding:5px;border-radius:999px;box-shadow:var(--sh);gap:2px}
+.tab{border:0;border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px}
+.tab[aria-current="page"]{background:var(--fg);color:var(--bg)}
+.ghost{border-radius:999px;background:var(--surface);border-color:transparent;box-shadow:var(--sh)}
+.btn{background:var(--grad);color:#fff;border:0;border-radius:999px;padding:13px 24px;font-weight:700;box-shadow:0 8px 22px rgba(91,75,239,.28)}
+.btn:hover{filter:brightness(1.07)}
+.btn.sec{background:var(--surface);color:var(--fg);border:1px solid var(--line);box-shadow:none;padding:11px 20px}
+.btn.danger{background:var(--bad);color:#fff}
+.hero{padding-block:30px 22px}
+.hero h1{font-size:clamp(40px,7.4vw,68px);letter-spacing:-.05em;line-height:1;font-weight:800}
+.hero h1 em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:17px}
+.ficha{border:0;border-radius:28px;box-shadow:var(--sh)}
+.ficha div{border-color:var(--line)}
+.ficha b{font-weight:800;letter-spacing:-.03em}
+.panel,.panel.form,.qcard,.strip,.kpi,.chart,.band,.rv,.confirm,.nav,.tp,.modc{border-radius:26px;border-color:transparent;box-shadow:var(--sh)}
+.panel.form{padding:28px}
+.strip{background:var(--fg);color:var(--bg);border:0}
+.strip .label,.strip .note{color:inherit;opacity:.75}
+.step b{border:0;background:var(--accent-soft);color:var(--accent);font-weight:800}
+.scopes{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+@media (min-width:900px){
+  .scopes{grid-template-columns:1.35fr 1fr 1fr;grid-auto-rows:minmax(120px,auto)}
+  .scope:first-child{grid-row:span 2;background:var(--grad);color:#fff;border:0;padding:24px 24px 24px 24px;justify-content:flex-start}
+  .scope:first-child b{font-size:24px;letter-spacing:-.03em;margin-top:28px;font-weight:800}
+  .scope:first-child small{color:#E9E3FF;font-size:15px}
+  .scope:first-child .dot{left:auto;right:20px;top:20px;border-color:rgba(255,255,255,.7)}
+  .scope:first-child:has(input:checked){background:var(--grad);outline:3px solid var(--accent);outline-offset:3px}
+  .scope:first-child:has(input:checked) .dot{border-color:#fff;background:radial-gradient(circle,#fff 0 6px,transparent 7px)}
+}
+.scope{border-radius:22px;border:1px solid transparent;background:var(--surface);box-shadow:var(--sh);padding:16px 16px 16px 48px}
+.scope:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.scope select{border-radius:999px}
+.field input,.field select,.scope select{border-radius:16px;border:1.5px solid var(--line);background:var(--surface)}
+.stats{background:transparent;backdrop-filter:blur(10px);border-bottom:0}
+.bar{height:8px;border-radius:99px;background:var(--sunk)}
+.bar i{background:var(--grad);border-radius:99px}
+.tag{border-radius:999px;border-color:transparent;background:var(--accent-soft);color:var(--accent);padding:3px 10px;letter-spacing:.03em}
+.qtext{font-size:19px}
+.opt{border-radius:20px;background:var(--surface);border:1.5px solid var(--line)}
+.bub{border-radius:12px;border-color:var(--line);background:var(--sunk);color:var(--fg)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .bub{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip{border-radius:999px}
+@media (max-width:620px){.tabs{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{padding:8px 13px;font-size:13px;white-space:nowrap;flex:none}}
+.mods{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.modc{border-radius:18px;padding:12px 13px;gap:2px}
+.modc .pct{font-size:22px}
+.modc b{font-size:13px;line-height:1.2;font-weight:700}
+.modc .note{font-size:11.5px;line-height:1.35}
+.modc .label{font-size:10.5px}
+@media (max-width:900px){.mods{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}}
 </style>
 
 <div class="app">
@@ -311,8 +385,8 @@ details.tp>summary b{font-family:var(--f-display);font-size:18px;line-height:1.2
   <section id="v-home" class="view">
     <div class="hero">
       <div>
-        <div class="label">Folha de respostas · Certificação CPA</div>
-        <h1>Treino <em>CPA</em></h1>
+        <div class="label">Simulado oficial · Certificação CPA</div>
+        <h1>Treine como se fosse a <em>prova real</em>.</h1>
         <p class="lead">Simulado no formato da prova da CPA: 50 questões em 2h30, com árvores de decisão, correção comentada, resumo dos tópicos mais cobrados e uma leitura honesta da sua evolução.</p>
       </div>
       <div class="ficha" id="ficha"></div>
@@ -1415,7 +1489,7 @@ function renderReport(){
     '<textarea class="exportbox" id="expBox" readonly hidden aria-label="Conteúdo exportado"></textarea>';
 }
 /* ===== Compartilhar: PDF, e-mail e LinkedIn ===== */
-const PLATFORM_URL="https://SEU-USUARIO.github.io/treino-cpa/";
+const PLATFORM_URL="https://vivmartins.github.io/treino-cpa/";
 const HASHTAGS="#CPA #ANBIMA #MercadoFinanceiro #Investimentos";
 function pdfBuild(){
   const R=S.res,P=Math.round(R.pct),n=S.qs.length,items=matItems(R),pass=R.pct>=S.meta;

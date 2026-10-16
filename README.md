@@ -17,7 +17,7 @@ Plataforma gratuita de simulados para a certificação **CPA (ANBIMA)**, em um �
 1. Crie um repositório público, por exemplo `treino-cpa`.
 2. Envie `index.html`, `README.md` e `LICENSE`.
 3. Em *Settings → Pages*, escolha a branch `main` e a pasta `/ (root)`.
-4. Atualize o endereço de divulgação no `index.html`: procure por `SEU-USUARIO` e troque pelo seu usuário do GitHub.
+4. O endereço de divulgação já aponta para https://vivmartins.github.io/treino-cpa/. Se mudar o nome do repositório, atualize `PLATFORM_URL` no `index.html`.
 
 ## Aviso
 
