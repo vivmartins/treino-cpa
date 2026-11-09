@@ -363,6 +363,13 @@ h1,h2,h3,h4{letter-spacing:-.025em}
 .modc .note{font-size:11.5px;line-height:1.35}
 .modc .label{font-size:10.5px}
 @media (max-width:900px){.mods{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}}
+
+.qfield{grid-column:1/-1}
+.qchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.qchips button{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font:600 13px var(--f-ui);cursor:pointer}
+.qchips button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.qfield .note{display:block;margin-top:6px}
+.qfield input{max-width:220px}
 </style>
 
 <div class="app">
@@ -403,6 +410,7 @@ h1,h2,h3,h4{letter-spacing:-.025em}
           <div class="field"><label for="nome" class="label">Nome</label><input type="text" id="nome" placeholder="Opcional" autocomplete="name"></div>
           <div class="field"><label for="meta" class="label">Meta de aprovação (%)</label><input type="number" id="meta" min="1" max="100" value="70" inputmode="numeric"></div>
           <div class="field"><label for="tempo" class="label">Tempo alvo (min)</label><input type="number" id="tempo" min="1" max="600" value="60" inputmode="numeric"></div>
+          <div class="field qfield"><label for="qtd" class="label">Número de questões</label><input type="number" id="qtd" min="1" max="300" placeholder="Todas do escopo" inputmode="numeric"><div class="qchips" id="qchips"><button type="button" data-q="10">10</button><button type="button" data-q="20">20</button><button type="button" data-q="30">30</button><button type="button" data-q="40">40</button><button type="button" data-q="">Todas</button></div><small class="note" id="qtdNote"></small></div>
         </div>
       </div>
       <div>
@@ -1118,7 +1126,7 @@ const SCOPES=[
   {id:"arvores",t:"Árvores de decisão",d:()=>TREES.length+" casos de atendimento em etapas, no modelo interativo descrito no guia da Anbima."},
   {id:"s1",t:"Simulado I",d:()=>BANK.filter(q=>q.s===1).length+" questões de fundamentos: SFN, economia, matemática financeira, ética, risco, estatística, princípios e ASG."},
   {id:"s2",t:"Simulado II",d:()=>BANK.filter(q=>q.s===2).length+" questões de produtos: renda fixa, renda variável, fundos, previdência e derivativos."},
-  {id:"misto",t:"Misto aleatório",d:()=>"30 questões sorteadas de todas as matérias."},
+  {id:"misto",t:"Misto aleatório",d:()=>"Sorteadas de todas as matérias (padrão: 30 questões)."},
   {id:"materia",t:"Treino por módulo ou matéria",d:()=>"Todas as questões de um módulo do programa ou de uma única matéria."},
   {id:"erros",t:"Treinar meus erros",d:()=>{const n=errIds().length;return n?n+" questões que você errou ou deixou em branco na última vez em que apareceram.":"Libera depois da sua primeira prova. Reúne as questões que você errou.";}}
 ];
@@ -1132,9 +1140,20 @@ function scopeN(id){
   if(id==="misto")return Math.min(30,BANK.length);
   return BANK.filter(q=>q.s===(id==="s1"?1:2)).length;
 }
+function qtdVal(){const v=parseInt($("#qtd").value,10);return v>=1?v:0;}
+function effN(){const n=scopeN(selScope),v=qtdVal();return selScope==="misto"?(v||n):(v?Math.min(v,n):n);}
+function syncQtd(){
+  const f=$("#qtd"),note=$("#qtdNote"),ch=$("#qchips");
+  if(selScope==="oficial"){f.value="";f.disabled=true;f.placeholder="50 (fixo)";ch.style.display="none";note.textContent="A prova completa segue o formato oficial: sempre 50 questões, 2h30.";return;}
+  f.disabled=false;f.placeholder="Todas do escopo";ch.style.display="";
+  const n=selScope==="misto"?BANK.length:scopeN(selScope),v=qtdVal();
+  note.textContent=(v&&selScope!=="misto"&&v>n?"Este escopo tem "+n+" questões; serão usadas todas. ":"")+"Sorteadas ao acaso"+(selScope==="misto"?" entre todas as matérias.":(" dentro do escopo ("+n+" disponíveis)."));
+  [...ch.children].forEach(b=>b.setAttribute("aria-pressed",String(String(v||"")===b.dataset.q)));
+}
 function syncTempo(){
+  syncQtd();
   if(selScope==="oficial"){$("#tempo").value=150;return;}
-  if(!userTempo)$("#tempo").value=Math.max(5,Math.round(scopeN(selScope)*(selScope==="arvores"?5:2)));
+  if(!userTempo)$("#tempo").value=Math.max(5,Math.round(effN()*(selScope==="arvores"?5:2)));
 }
 function renderScopes(){
   if(selScope==="erros"&&!errIds().length)selScope="oficial";
@@ -1151,6 +1170,9 @@ $("#scopes").addEventListener("change",e=>{
   else if(e.target.id==="materia"){selMat=e.target.value;selScope="materia";const r=document.querySelector("input[value=materia]");if(r)r.checked=true;syncTempo();}
 });
 $("#tempo").addEventListener("input",()=>{userTempo=true;});
+
+$("#qtd").addEventListener("input",syncTempo);
+$("#qchips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;$("#qtd").value=b.dataset.q;syncTempo();});
 function renderHome(){
   renderScopes();
   const mats=Object.keys(MAT).length;
@@ -1202,14 +1224,15 @@ function buildOfficial(){
 }
 function buildQuiz(kind,mat){
   if(kind==="oficial")return buildOfficial();
-  if(kind==="arvores")return shuffle(TREES.slice()).map(mkTree);
+  const N=qtdVal();
+  if(kind==="arvores")return shuffle(TREES.slice()).slice(0,N||TREES.length).map(mkTree);
   let pool;
   if(kind==="s1")pool=BANK.filter(q=>q.s===1);
   else if(kind==="s2")pool=BANK.filter(q=>q.s===2);
-  else if(kind==="misto")pool=shuffle(BANK.slice()).slice(0,30);
+  else if(kind==="misto")pool=shuffle(BANK.slice()).slice(0,N||30);
   else if(kind==="materia")pool=poolMat(mat);
   else{const ids=errIds();pool=ALLQ.filter(q=>ids.indexOf(q.id)>=0);}
-  return shuffle(pool.slice()).map(x=>x.steps?mkTree(x):mkMC(x));
+  return shuffle(pool.slice()).slice(0,N||pool.length).map(x=>x.steps?mkTree(x):mkMC(x));
 }
 function begin(){
   const meta=parseInt($("#meta").value,10);let tempo=parseInt($("#tempo").value,10);
